@@ -6,12 +6,9 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
-pillow = "*"
-rgbmatrixemulator = "*"
 orjson = "*"
-setuptools = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"

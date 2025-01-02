@@ -36,6 +36,10 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
+      # Pack version into the .env file
+      - name: Pack version into the .env file
+        run: echo "IMAGE_TAG=${{ inputs.version }}" > .env
+
       # Setup Docker remote Context
       - uses: matiasnu/github-action-ssh-docker-compose@v2.0.3
         name: Docker-Compose Remote Deployment

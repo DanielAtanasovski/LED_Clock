@@ -38,7 +38,14 @@ jobs:
 
       # Pack version into the .env file
       - name: Pack version into the .env file
-        run: echo "IMAGE_TAG=${{ inputs.version }}" > .env
+        run: | 
+          echo "IMAGE_TAG=${{ inputs.version }}" > .env
+
+          echo "${{ inputs.version}}"
+          echo "IMAGE_TAG=${{ inputs.version }}"
+          echo "${IMAGE_TAG}"
+          cat .env
+
 
       # Setup Docker remote Context
       - uses: matiasnu/github-action-ssh-docker-compose@v2.0.3

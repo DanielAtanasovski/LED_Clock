@@ -13,13 +13,16 @@ on:
         required: true
         default: "latest"
         type: string
-
-env:
-  STACK_NAME: "led-backend"
+      delete:
+        description: "Delete the deployment"
+        required: false
+        default: "false"
 
 jobs:
   deploy:
     environment: ${{ inputs.environment }}
+    env:
+      IMAGE_TAG: ${{ inputs.version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,3 +45,4 @@ jobs:
           ssh_user: ${{ secrets.LED_PI_USER }}
           docker_compose_prefix: led-clock-backend
           docker_compose_filename: .github/deploy/docker-compose.aurora.yml
+          docker_compose_down: ${{ inputs.delete }}

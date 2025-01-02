@@ -10,7 +10,7 @@ services:
       - bridge
 
   driver:
-    image: ghcr.io/danielatanasovski/led-clock-backend-driver:latest
+    image: ghcr.io/danielatanasovski/led-clock-backend-driver:${IMAGE_TAG}
     container_name: led-driver
     hostname: led-driver
     ports: 
@@ -39,7 +39,7 @@ services:
         target: /app/saved-matrices
 
   server:
-    image: ghcr.io/danielatanasovski/led-clock-backend-server:latest
+    image: ghcr.io/danielatanasovski/led-clock-backend-server:${IMAGE_TAG}
     container_name: led-backend
     hostname: led-backend
     environment:

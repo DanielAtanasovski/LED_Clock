@@ -16,7 +16,8 @@ on:
       delete:
         description: "Delete the deployment"
         required: false
-        default: "false"
+        default: false
+        type: boolean
 
 jobs:
   deploy:
@@ -36,24 +37,23 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      # Pack version into the .env file
-      - name: Pack version into the .env file
-        run: | 
-          echo "IMAGE_TAG=${{ inputs.version }}" > .env
-
-          echo "${{ inputs.version}}"
-          echo "IMAGE_TAG=${{ inputs.version }}"
-          echo "${IMAGE_TAG}"
-          cat .env
-
-
-      # Setup Docker remote Context
-      - uses: matiasnu/github-action-ssh-docker-compose@v2.0.3
-        name: Docker-Compose Remote Deployment
+      # Setup docker remote context
+      - name: Set up docker context over SSH authentication
+        uses: amirmarmul/docker-context-ssh-action@v2
         with:
-          ssh_host: ${{ secrets.LED_PI_ADDRESS }}
-          ssh_private_key: ${{ secrets.LED_PI_SSH_KEY }}
-          ssh_user: ${{ secrets.LED_PI_USER }}
-          docker_compose_prefix: led-clock-backend
-          docker_compose_filename: .github/deploy/docker-compose.aurora.yml
-          docker_compose_down: ${{ inputs.delete }}
+          ssh-host: ${{ secrets.LED_PI_ADDRESS }}
+          ssh-username: ${{ secrets.LED_PI_USER }}
+          ssh-private-key: ${{ secrets.LED_PI_SSH_KEY }}
+          context-use: true
+
+      # Deploy / Remove the Driver and Server services
+      - name: Deploy / Remove the Driver and Server services
+        run: |
+          echo "Deploying version ${{ inputs.version }} to ${{ inputs.environment }} environment"
+
+          if [ "${{ inputs.delete }}" = true ]; then
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml down
+          else
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml pull
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml up -d --remove-orphans --build
+          fi
